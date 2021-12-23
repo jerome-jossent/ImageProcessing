@@ -6,11 +6,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [ExecuteInEditMode] //Normal & Edit Mode
-public class ImageViewer : Tile_Output
-{   
+public class ImageViewer : Tile
+{
+    [Newtonsoft.Json.JsonIgnore]
     public RawImage image;
+    [Newtonsoft.Json.JsonIgnore]
     public object input;
-    //object _lock;
 
     public override void _NewInput(object input)
     {
@@ -41,13 +42,10 @@ public class ImageViewer : Tile_Output
         }
     }
 
-    //public new void Update()
-    //{
-    //    base.Update();
-    //    if (input != null)
-    //        lock (_lock)            
-    //            _NewInput(input);            
-    //}
+    public override void _NewOutput(object output)
+    {
+        throw new System.NotImplementedException();
+    }
 
     public void _Test()
     {

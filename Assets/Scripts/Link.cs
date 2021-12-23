@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class Link : MonoBehaviour
 {
-    public Tile_Input _point_Start;
-    public Tile_Output _point_End;
+    public Tile _point_Start;
+    public Tile _point_End;
+    public GameObject _connecteur_Start;
+    public GameObject _connecteur_End;
     LineRenderer lr;
     MeshCollider meshCollider;
     Material material;
@@ -19,15 +21,13 @@ public class Link : MonoBehaviour
         points = new Vector3[2];
         lr = gameObject.AddComponent<LineRenderer>();
         lr.useWorldSpace = true;
-
-
         meshCollider = gameObject.AddComponent<MeshCollider>();
     }
 
     void Update()
     {
-        points[0] = _point_Start._OutputConnector.transform.position;
-        points[1] = _point_End._InputConnector.transform.position;
+        points[0] = _connecteur_Start.transform.position;
+        points[1] = _connecteur_End.transform.position;
         lr.material = this.material;
         lr.startWidth = this.thickness;
         lr.endWidth = this.thickness;
@@ -46,31 +46,10 @@ public class Link : MonoBehaviour
 
     internal void _SetStartEnd(GameObject connector1, GameObject connector2)
     {
-        Tile t1 = connector1.transform.parent.GetComponent<Tile>();
-        switch (t1._GetType())
-        {
-            case Tile.TileType.Tile_Input:
-                _point_Start = (Tile_Input)t1;
-                break;
-            case Tile.TileType.Tile_Output:
-                _point_End = (Tile_Output)t1;
-                break;
-            case Tile.TileType.Tile_Process:
-                break;
-        }
-
-        Tile t2 = connector2.transform.parent.GetComponent<Tile>();
-        switch (t2._GetType())
-        {
-            case Tile.TileType.Tile_Input:
-                _point_Start = (Tile_Input)t2;
-                break;
-            case Tile.TileType.Tile_Output:
-                _point_End = (Tile_Output)t2;
-                break;
-            case Tile.TileType.Tile_Process:
-                break;
-        }
+        _connecteur_Start = LinksManager.GetSource(connector1, connector2);
+        _connecteur_End = LinksManager.GetListener(connector1, connector2);
+        _point_Start = _connecteur_Start.transform.parent.GetComponent<Tile>();
+        _point_End = _connecteur_End.transform.parent.GetComponent<Tile>();
     }
 
     internal void _SetMaterial(Material material)
@@ -81,5 +60,13 @@ public class Link : MonoBehaviour
     internal void _SetThickness(float thickness)
     {
         this.thickness = thickness;
+    }
+
+    public new string ToString()
+    {
+        string txt ="Link between " +
+            _point_Start.name + "[" + _connecteur_Start.name + "] & " +
+            _point_End.name + "[" + _connecteur_End.name + "]";
+        return txt;
     }
 }

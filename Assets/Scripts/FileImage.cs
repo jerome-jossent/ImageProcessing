@@ -4,16 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode] //Normal & Edit Mode
-public class FileImage : Tile_Input
+public class FileImage : Tile
 {
+    [Newtonsoft.Json.JsonIgnore]
     public TMPro.TMP_Text TMP_Text_fileName;
     public string _fileName;
+    [Newtonsoft.Json.JsonIgnore]
     public Mat _mat;
+
+    public override void _NewInput(object input)
+    {
+        throw new System.NotImplementedException();
+    }
 
     public override void _NewOutput(object output)
     {
         _mat = new Mat();
         _mat = OpenCVForUnity.ImgcodecsModule.Imgcodecs.imread((string)output);
+
+        OpenCVForUnity.ImgprocModule.Imgproc.cvtColor(_mat, _mat, OpenCVForUnity.ImgprocModule.Imgproc.COLOR_BGR2RGB);
+
         linksManager._NewData(this, _mat);
     }
 

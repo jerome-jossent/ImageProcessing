@@ -116,22 +116,53 @@ public class LinksManager : MonoBehaviour
 
         lk._SetMaterial(material);
         lk._SetThickness(thickness);
+
+        PrintDico();
     }
 
-    private GameObject GetListener(GameObject c1, GameObject c2)
+
+
+    void PrintDico()
+    {
+        string msg = "links : " + links.Count;
+        foreach (var _links in links)
+        {
+            Dictionary<Tile, Link> linksV = _links.Value;
+            msg += "\n" + _links.Key.name + " : " + linksV.Count;
+
+            foreach (var link in linksV)
+            {
+                Link linkV = link.Value;
+                msg += "\n" + link.Key.name + " : " + linkV.ToString();
+            }
+        }
+
+        Debug.Log(msg);
+    }
+
+
+    public static GameObject GetListener(GameObject c1, GameObject c2)
     {
         if (c1.tag == "Listener")
             return c1;
-        else
+
+        if (c2.tag == "Listener")
             return c2;
+
+        Debug.Log("==GetListener ERREUR==" + c1.name + " " + c2.name);
+        throw new System.NotImplementedException();
     }
 
-    private GameObject GetSource(GameObject c1, GameObject c2)
+    public static GameObject GetSource(GameObject c1, GameObject c2)
     {
         if (c1.tag == "Source")
             return c1;
-        else
+
+        if (c2.tag == "Source")
             return c2;
+
+        Debug.Log("==GetSource ERREUR==" + c1.name + " " + c2.name);
+        throw new System.NotImplementedException();
     }
 
     void OnValidate()
