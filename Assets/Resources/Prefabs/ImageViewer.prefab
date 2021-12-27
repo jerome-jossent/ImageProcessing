@@ -428,7 +428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.18711881, g: 0.4528302, b: 0.10110356, a: 1}
+  m_Color: {r: 0.2, g: 0.6, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Viewer
+  m_text: ImageViewer 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -786,8 +786,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 368, y: 71.242966}
-  m_SizeDelta: {x: 300, y: 357.514}
+  m_AnchoredPosition: {x: 370, y: 70}
+  m_SizeDelta: {x: 300, y: 360}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &6362551705423241078
 BoxCollider2D:
@@ -813,7 +813,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 300, y: 357.514}
+  m_Size: {x: 300, y: 360}
   m_EdgeRadius: 0
 --- !u!114 &8816712819296091381
 MonoBehaviour:
@@ -831,8 +831,6 @@ MonoBehaviour:
   _InputConnector:
   - {fileID: 3719037172018291416}
   linksManager: {fileID: 0}
-  tile_name: Viewer
-  tile_title_color: {r: 0.18711881, g: 0.4528302, b: 0.10110356, a: 1}
   TMP_Text: {fileID: 3719037173400172761}
   rawImage: {fileID: 3719037172731453156}
   image: {fileID: 3719037173247364158}

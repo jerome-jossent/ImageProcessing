@@ -15,7 +15,7 @@ public class LinksManager : MonoBehaviour
 
     GameObject gameObject_connector_current;
     GameObject gameObject_current;
-    Tile.TileType tileType_current;
+    TileInfo.TileType tileType_current;
     Vector2 connector_current_position;
 
     public float thickness;
@@ -63,7 +63,7 @@ public class LinksManager : MonoBehaviour
             //reset
             gameObject_connector_current = null;
             gameObject_current = null;
-            tileType_current = Tile.TileType.None;
+            tileType_current = TileInfo.TileType.None;
             connector_current_position = Vector2.zero;
             lr.enabled = false;
         }
@@ -93,6 +93,10 @@ public class LinksManager : MonoBehaviour
         //le lien existe déjà ?
         Tile t_source = GetSource(connecteur1, connecteur2).transform.parent.GetComponent<Tile>();
         Tile t_listener = GetListener(connecteur1, connecteur2).transform.parent.GetComponent<Tile>();
+
+        t_source._tileInfo.UpdateDATA();
+        t_listener._tileInfo.UpdateDATA();
+
         if (links.ContainsKey(t_source))
         {
             if (links[t_source].ContainsKey(t_listener))

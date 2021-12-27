@@ -8,6 +8,7 @@ public class LoadSaveWorld : MonoBehaviour
     public Canvas canvasWorld;
 
     public string txt;
+    string fileJson = @"C:\_Saves\ImageProcessing\save.json";
 
     public bool save, load;
     private void Update()
@@ -20,29 +21,91 @@ public class LoadSaveWorld : MonoBehaviour
         if (load)
         {
             load = false;
+            _ClearAllChilds();
             _Load();
         }
     }
 
+    void _ClearAllChilds()
+    {
+        while (canvasWorld.transform.childCount > 0)
+            DestroyImmediate(canvasWorld.transform.GetChild(0).gameObject);
+        linksManager.links = new Dictionary<Tile, Dictionary<Tile, Link>>();
+    }
+
     public void _Load()
     {
+        if (System.IO.File.Exists(fileJson))
+        {
+            txt = System.IO.File.ReadAllText(fileJson);
+            WorldDATA wd = Newtonsoft.Json.JsonConvert.DeserializeObject<WorldDATA>(txt);
 
+            //TILES
+            for (int i = 0; i < wd.tilesInfo.Count; i++)
+            {
+                TileInfo ti = wd.tilesInfo[i];
+                string prefname = "Prefabs\\" + ti.type.ToString();
+                Debug.Log(prefname);
+                GameObject prefab = Resources.Load(prefname, typeof(GameObject)) as GameObject;
+                GameObject go = Instantiate(prefab);
+                go.name = ti.name;
+                go.transform.SetParent(canvasWorld.transform);
+                Tile t = null;
+                switch (ti.type)
+                {
+                    case TileInfo.TileType.None:
+                        Debug.Log("erreur loading " + ti.name);
+                        break;
+                    case TileInfo.TileType.FileImage:
+                        FileImage fileImage = go.GetComponent<FileImage>();
+                        fileImage._Init(wd.tilesInfo[i]);
+                        t = fileImage;
+                        break;
+                    case TileInfo.TileType.ImageViewer:
+                        ImageViewer imageViewer = go.GetComponent<ImageViewer>();
+                        imageViewer._Init(wd.tilesInfo[i]);
+                        t = imageViewer;
+                        break;
+                }
+                if (t != null && !linksManager.links.ContainsKey(t))
+                    linksManager.links.Add(t, new Dictionary<Tile, Link>());
+            }
+
+            //LINKS
+
+
+        }
     }
 
     public void _Save()
     {
-        txt = "";
+        WorldDATA wd = new WorldDATA();
+
         for (int i = 0; i < canvasWorld.transform.childCount; i++)
         {
             GameObject child = canvasWorld.transform.GetChild(i).gameObject;
-            Tile tile = child.GetComponent<Tile>();
-            //string data = JsonUtility.ToJson(tile, true);
-            string data = Newtonsoft.Json.JsonConvert.SerializeObject(tile, Newtonsoft.Json.Formatting.Indented);
-            txt += data + "\n";
+            Tile t = child.GetComponent<Tile>();
+            TileInfo ti = t._tileInfo;
+            wd.tilesInfo.Add(ti);
+            ti.UpdateDATA();
         }
 
+        foreach (Dictionary<Tile, Link> tile in linksManager.links.Values)
+            foreach (Link link in tile.Values)
+                wd.linksInfo.Add(link._linkInfo);
 
-
+        txt = Newtonsoft.Json.JsonConvert.SerializeObject(wd, Newtonsoft.Json.Formatting.Indented);
+        System.IO.File.WriteAllText(fileJson, txt);
     }
+}
 
+public class WorldDATA
+{
+    public List<TileInfo> tilesInfo { get; set; }
+    public List<LinkInfo> linksInfo { get; set; }
+    public WorldDATA()
+    {
+        tilesInfo = new List<TileInfo>();
+        linksInfo = new List<LinkInfo>();
+    }
 }

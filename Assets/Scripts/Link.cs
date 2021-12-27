@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Link : MonoBehaviour
 {
+    public LinkInfo _linkInfo;
+
     public Tile _point_Start;
     public Tile _point_End;
     public GameObject _connecteur_Start;
@@ -33,7 +35,6 @@ public class Link : MonoBehaviour
         lr.endWidth = this.thickness;
         lr.SetPositions(points);
 
-
         Mesh mesh = new Mesh();
         lr.BakeMesh(mesh, true);
         meshCollider.sharedMesh = mesh;
@@ -41,7 +42,7 @@ public class Link : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("bo");
+        Debug.Log("TODO");
     }
 
     internal void _SetStartEnd(GameObject connector1, GameObject connector2)
@@ -50,6 +51,8 @@ public class Link : MonoBehaviour
         _connecteur_End = LinksManager.GetListener(connector1, connector2);
         _point_Start = _connecteur_Start.transform.parent.GetComponent<Tile>();
         _point_End = _connecteur_End.transform.parent.GetComponent<Tile>();
+
+        _linkInfo = new LinkInfo(_connecteur_Start, _connecteur_End);
     }
 
     internal void _SetMaterial(Material material)
@@ -68,5 +71,21 @@ public class Link : MonoBehaviour
             _point_Start.name + "[" + _connecteur_Start.name + "] & " +
             _point_End.name + "[" + _connecteur_End.name + "]";
         return txt;
+    }
+}
+
+public class LinkInfo
+{
+    public string tileInfoNameStart { get; set; }
+    public string connectorNameStart { get; set; }
+    public string tileInfoNameEnd { get; set; }
+    public string connectorNameEnd { get; set; }
+
+    public LinkInfo(GameObject connecteur_Start, GameObject connecteur_End)
+    {
+        tileInfoNameStart = connecteur_Start.transform.parent.gameObject.GetComponent<Tile>()._tileInfo.name;
+        tileInfoNameEnd = connecteur_End.transform.parent.gameObject.GetComponent<Tile>()._tileInfo.name;
+        connectorNameStart = connecteur_Start.name;
+        connectorNameEnd = connecteur_End.name;
     }
 }

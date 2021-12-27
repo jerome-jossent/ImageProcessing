@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,63 +8,47 @@ using UnityEngine.UI;
 
 public abstract class Tile : MonoBehaviour
 {
-    [Newtonsoft.Json.JsonIgnore]
+    public TileInfo _tileInfo;
+
     public GameObject[] _OutputConnectors;
-    [Newtonsoft.Json.JsonIgnore]
     public GameObject[] _InputConnector;
 
     public abstract void _NewInput(object input);
     public abstract void _NewOutput(object output);
 
-    [Newtonsoft.Json.JsonIgnore]
     public LinksManager linksManager;
 
-    public enum TileType { None, FileImage, ImageViewer }
-
-    TileType tileType;
-
-    public string tile_name;
-
-    [Newtonsoft.Json.JsonIgnore] // :(
-    public Color tile_title_color;
-
-    [Newtonsoft.Json.JsonIgnore]
     public TMPro.TMP_Text TMP_Text;
-
-    [Newtonsoft.Json.JsonIgnore]
     public RawImage rawImage;
-
-    [Newtonsoft.Json.JsonIgnore] 
     bool moving;
-
-    [Newtonsoft.Json.JsonIgnore] 
     Vector2 position_0;
-
-    [Newtonsoft.Json.JsonIgnore] 
     Vector3 mouse_position_0;
+    BoxCollider2D boxCollider2D;
 
-    Vector3 tile_Position;
+    internal static TileInfo.TileType GetTileType(GameObject connector)
+    {
+        Tile t = connector.GetComponent<Tile>();
+        return t._tileInfo.type;
+    }
 
     public void Start()
     {
-        TMP_Text.text = tile_name;
-        rawImage.color = tile_title_color;
-        tile_Position = transform.position;
-
-        BoxCollider2D boxCollider2D = GetComponent<BoxCollider2D>();
-        boxCollider2D.size = gameObject.GetComponent<RectTransform>().sizeDelta;
-        boxCollider2D.offset = new Vector2(0, 0);
-
         moving = false;
     }
 
-    public TileType _GetType()
+    public void _Init(TileInfo tileInfo)
     {
-        return tileType;
-    }
-    public void _SetType(TileType tileType)
-    {
-        this.tileType = tileType;
+        _tileInfo = tileInfo;
+        TMP_Text.text = _tileInfo.name;
+        rawImage.color = _tileInfo.title_color.GetColor();
+
+        gameObject.GetComponent<RectTransform>().sizeDelta = _tileInfo.size;
+        boxCollider2D = GetComponent<BoxCollider2D>();
+        boxCollider2D.offset = new Vector2(0, 0);
+        boxCollider2D.size = gameObject.GetComponent<RectTransform>().sizeDelta;
+
+        transform.localScale = Vector3.one;
+        transform.localPosition = _tileInfo.local_position;
     }
 
     public void OnMouseDown()
@@ -71,15 +57,10 @@ public abstract class Tile : MonoBehaviour
         position_0 = transform.position;
         mouse_position_0 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
+
     public void OnMouseUp()
     {
         moving = false;
-    }
-
-    internal static TileType GetTileType(GameObject connector)
-    {
-        Tile t1 = connector.GetComponent<Tile>();
-        return t1._GetType();
     }
 
     public void Update()
@@ -88,7 +69,35 @@ public abstract class Tile : MonoBehaviour
         {
             Vector2 deplacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - mouse_position_0;
             transform.position = position_0 + deplacement;
-            tile_Position = transform.position;
+            if(_tileInfo==null)
+                _tileInfo = new TileInfo(this);
+            _tileInfo.local_position = transform.localPosition;
         }
+    }
+}
+
+public class TileInfo
+{
+    public enum TileType { None, FileImage, ImageViewer }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public TileType type { get; set; }
+    public string name { get; set; }
+    public SerializableColor title_color { get; set; }
+    public Vector2 local_position { get; set; }
+    public Vector2 size { get; set; }
+
+    [JsonIgnoreAttribute]
+    Tile tile;
+
+    public TileInfo(Tile tile)
+    {
+        this.tile = tile;
+    }
+
+    public void UpdateDATA()
+    {
+        name = tile.TMP_Text.text;
+        title_color = new SerializableColor(tile.rawImage.color);
     }
 }

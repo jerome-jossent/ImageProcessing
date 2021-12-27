@@ -12,6 +12,22 @@ public class ImageViewer : Tile
     public RawImage image;
     [Newtonsoft.Json.JsonIgnore]
     public object input;
+    public new void Start()
+    {
+        base.Start();
+        //TileInfo ti = new TileInfo()
+        //{
+        //    name = "ImageViewer 1",
+        //    title_color = new SerializableColor(0.2f, 0.6f, 0.2f),
+        //    type = TileInfo.TileType.ImageViewer,
+        //    local_position = new Vector2(370, 70),
+        //    size = new Vector2(300, 360)
+        //};
+        //_Init(ti);
+        if (_tileInfo == null)
+            _tileInfo = new TileInfo(this);
+        _tileInfo.type = TileInfo.TileType.ImageViewer;
+    }
 
     public override void _NewInput(object input)
     {

@@ -12,6 +12,24 @@ public class FileImage : Tile
     [Newtonsoft.Json.JsonIgnore]
     public Mat _mat;
 
+    public new void Start()
+    {
+        base.Start();
+        //TileInfo ti = new TileInfo()
+        //{
+        //    name = "FileImage 1",
+        //    title_color = new SerializableColor(0.2f, 0.5f, 0.9f),
+        //    type = TileInfo.TileType.FileImage,
+        //    local_position = new Vector2(-420, 140),
+        //    size = new Vector2(300, 215)
+        //};
+        //_Init(ti);
+
+        if (_tileInfo == null)
+            _tileInfo = new TileInfo(this);
+        _tileInfo.type = TileInfo.TileType.FileImage;
+    }
+
     public override void _NewInput(object input)
     {
         throw new System.NotImplementedException();
