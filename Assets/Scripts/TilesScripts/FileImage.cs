@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode] //Normal & Edit Mode
+//[ExecuteInEditMode] //Normal & Edit Mode
 public class FileImage : Tile
 {
     [Newtonsoft.Json.JsonIgnore]
@@ -71,8 +71,8 @@ public class FileImage : Tile
         _NewOutput(_fileName);
     }
 
-    void OnValidate()
-    {
-        Start();
-    }
+    //void OnValidate()
+    //{
+    //    Start();
+    //}
 }

@@ -44,8 +44,8 @@ public class LoadSaveWorld : MonoBehaviour
             for (int i = 0; i < wd.tilesInfo.Count; i++)
             {
                 TileInfo ti = wd.tilesInfo[i];
-                string prefname = "Prefabs\\" + ti.type.ToString();
-                Debug.Log(prefname);
+                string prefname = "Prefabs\\Tiles\\" + ti.type.ToString();
+                //Debug.Log(prefname);
                 GameObject prefab = Resources.Load(prefname, typeof(GameObject)) as GameObject;
                 GameObject go = Instantiate(prefab);
                 go.name = ti.name;
@@ -72,9 +72,29 @@ public class LoadSaveWorld : MonoBehaviour
             }
 
             //LINKS
-
-
+            for (int i = 0; i < wd.linksInfo.Count; i++)
+            {
+                LinkInfo li = wd.linksInfo[i];
+                //find GameObject Connectors
+                GameObject connector1 = FindChildOrGrandChild(canvasWorld.transform.Find(li.tileInfoNameStart).gameObject, li.connectorNameStart);
+                GameObject connector2 = FindChildOrGrandChild(canvasWorld.transform.Find(li.tileInfoNameEnd).gameObject, li.connectorNameEnd);
+                //make the link
+                linksManager.MakeLink(connector1, connector2);
+            }
         }
+    }
+
+    GameObject FindChildOrGrandChild(GameObject parent, string name)
+    {
+        for (int i = 0; i < parent.transform.childCount; i++)
+        {
+            GameObject child = parent.transform.GetChild(i).gameObject;
+            if (child.name == name) return child;
+
+            GameObject result = FindChildOrGrandChild(child, name);
+            if (result != null) return result;
+        }
+        return null;
     }
 
     public void _Save()
@@ -87,7 +107,7 @@ public class LoadSaveWorld : MonoBehaviour
             Tile t = child.GetComponent<Tile>();
             TileInfo ti = t._tileInfo;
             wd.tilesInfo.Add(ti);
-            ti.UpdateDATA();
+            ti.UpdateDATA(t);
         }
 
         foreach (Dictionary<Tile, Link> tile in linksManager.links.Values)

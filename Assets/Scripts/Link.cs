@@ -49,8 +49,8 @@ public class Link : MonoBehaviour
     {
         _connecteur_Start = LinksManager.GetSource(connector1, connector2);
         _connecteur_End = LinksManager.GetListener(connector1, connector2);
-        _point_Start = _connecteur_Start.transform.parent.GetComponent<Tile>();
-        _point_End = _connecteur_End.transform.parent.GetComponent<Tile>();
+        _point_Start = _connecteur_Start.GetComponentInParent<Tile>();
+        _point_End = _connecteur_End.GetComponentInParent<Tile>();
 
         _linkInfo = new LinkInfo(_connecteur_Start, _connecteur_End);
     }
@@ -67,7 +67,7 @@ public class Link : MonoBehaviour
 
     public new string ToString()
     {
-        string txt ="Link between " +
+        string txt = "Link between " +
             _point_Start.name + "[" + _connecteur_Start.name + "] & " +
             _point_End.name + "[" + _connecteur_End.name + "]";
         return txt;
@@ -81,10 +81,13 @@ public class LinkInfo
     public string tileInfoNameEnd { get; set; }
     public string connectorNameEnd { get; set; }
 
+    public LinkInfo()
+    { }
+
     public LinkInfo(GameObject connecteur_Start, GameObject connecteur_End)
     {
-        tileInfoNameStart = connecteur_Start.transform.parent.gameObject.GetComponent<Tile>()._tileInfo.name;
-        tileInfoNameEnd = connecteur_End.transform.parent.gameObject.GetComponent<Tile>()._tileInfo.name;
+        tileInfoNameStart = connecteur_Start.GetComponentInParent<Tile>()._tileInfo.name;
+        tileInfoNameEnd = connecteur_End.GetComponentInParent<Tile>()._tileInfo.name;
         connectorNameStart = connecteur_Start.name;
         connectorNameEnd = connecteur_End.name;
     }

@@ -6,6 +6,7 @@ public class Camera_MoveZoom : MonoBehaviour
 {
     bool moving;
     Vector3 mouse_position_0;
+    public bool zoomInWhenWheelUp;
 
     void Update()
     {
@@ -39,12 +40,12 @@ public class Camera_MoveZoom : MonoBehaviour
         }
 
         // zoom
-        float zoom = Input.mouseScrollDelta.y;
+        float zoom = (zoomInWhenWheelUp) ? -Input.mouseScrollDelta.y : Input.mouseScrollDelta.y;
         if (zoom != 0f)
         {
             float Zp = 100;
             float Zm = 1;
-            Camera.main.orthographicSize += Input.mouseScrollDelta.y;
+            Camera.main.orthographicSize += zoom;
             if (Camera.main.orthographicSize > Zp) Camera.main.orthographicSize = Zp;
             if (Camera.main.orthographicSize < Zm) Camera.main.orthographicSize = Zm;
         }

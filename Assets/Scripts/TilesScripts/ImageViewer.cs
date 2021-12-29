@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[ExecuteInEditMode] //Normal & Edit Mode
+//[ExecuteInEditMode] //Normal & Edit Mode
 public class ImageViewer : Tile
 {
     [Newtonsoft.Json.JsonIgnore]
@@ -27,6 +27,7 @@ public class ImageViewer : Tile
         if (_tileInfo == null)
             _tileInfo = new TileInfo(this);
         _tileInfo.type = TileInfo.TileType.ImageViewer;
+        typeGeneric = TileTypeGeneric.Out;
     }
 
     public override void _NewInput(object input)
@@ -38,7 +39,7 @@ public class ImageViewer : Tile
         }
 
         string typ = input.GetType().ToString();
-        Debug.Log(typ);
+        //Debug.Log(typ);
         Texture2D texture2D;
         switch (typ)
         {
@@ -80,8 +81,8 @@ public class ImageViewer : Tile
         _NewInput(imgMat);
     }
 
-    void OnValidate()
-    {
-        Start();
-    }
+    //void OnValidate()
+    //{
+    //    Start();
+    //}
 }

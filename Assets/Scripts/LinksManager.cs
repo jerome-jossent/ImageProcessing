@@ -23,8 +23,14 @@ public class LinksManager : MonoBehaviour
     LineRenderer lr;
     Vector3[] points;
 
+    public static LinksManager Instance { get; internal set; }
+
     void Start()
     {
+        if (Instance != null)
+            Destroy(this);
+        Instance = this;
+
         canvas_rect = canvas.GetComponent<RectTransform>();
         if (thickness == 0) thickness = 0.05f;
         points = new Vector3[2];
@@ -47,7 +53,8 @@ public class LinksManager : MonoBehaviour
         if (gameObject_current == null)
         {
             gameObject_connector_current = Connector;
-            gameObject_current = Connector.transform.parent.gameObject;
+            Tile t = Connector.GetComponentInParent<Tile>();
+            gameObject_current = t.gameObject;
             tileType_current = Tile.GetTileType(gameObject_current);
             connector_current_position = Connector.transform.position;
             points[0] = connector_current_position;
@@ -81,21 +88,14 @@ public class LinksManager : MonoBehaviour
         }
     }
 
-    private void MakeLink(GameObject connecteur1, GameObject connecteur2)
+    public void MakeLink(GameObject connecteur1, GameObject connecteur2)
     {
-        //Tile t1 = connecteur1.transform.parent.GetComponent<Tile>();
-        //Tile t2 = connecteur2.transform.parent.GetComponent<Tile>();
-
-        //Debug.Log("Link between " +
-        //    connecteur1.transform.parent.name + "[" + connecteur1.name + " : " + t1._GetType().ToString() + "] & " +
-        //    connecteur2.transform.parent.name + "[" + connecteur2.name + " : " + t2._GetType().ToString() + "]");
-
         //le lien existe déjà ?
-        Tile t_source = GetSource(connecteur1, connecteur2).transform.parent.GetComponent<Tile>();
-        Tile t_listener = GetListener(connecteur1, connecteur2).transform.parent.GetComponent<Tile>();
+        Tile t_source = GetSource(connecteur1, connecteur2).GetComponentInParent<Tile>();
+        Tile t_listener = GetListener(connecteur1, connecteur2).GetComponentInParent<Tile>();
 
-        t_source._tileInfo.UpdateDATA();
-        t_listener._tileInfo.UpdateDATA();
+        t_source._tileInfo.UpdateDATA(t_source);
+        t_listener._tileInfo.UpdateDATA(t_listener);
 
         if (links.ContainsKey(t_source))
         {
