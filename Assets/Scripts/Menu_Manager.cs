@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TilesMenu_Manager : MonoBehaviour
+public class Menu_Manager : MonoBehaviour
 {
+    public GameObject canvasWorld;
+
+    public GameObject Menu_Boutons;
+
     public GameObject pannel1;
     public GameObject pannel2;
 
@@ -14,12 +18,9 @@ public class TilesMenu_Manager : MonoBehaviour
     List<GameObject> prefabs_process;
     List<GameObject> prefabs_out;
 
-    public Color color_in;
-    public Color color_process;
-    public Color color_out;
-
     void Start()
     {
+        Menu_Boutons.SetActive(false);
         pannel1.SetActive(false);
         pannel2.SetActive(false);
         LoadPrefabs();
@@ -52,63 +53,67 @@ public class TilesMenu_Manager : MonoBehaviour
         }
     }
 
-    public void _Menu_Add()
+    public void _Menu_SHOW()
+    {
+        if (Menu_Boutons.activeSelf)
+        {
+            pannel1.SetActive(false);
+            pannel2.SetActive(false);
+        }
+
+        Menu_Boutons.SetActive(!Menu_Boutons.activeSelf);
+    }
+
+    public void _Menu_Add() //Display/Hide
     {
         if (pannel1.activeSelf)
         {
             pannel1.SetActive(false);
             pannel2.SetActive(false);
-
         }
         else
         {
-            pannel1.SetActive(!pannel1.activeSelf);
+            pannel1.SetActive(true);
         }
     }
 
-    public void _Menu_Add_Sources()
+    public void _Menu_Remove(bool value)
+    {
+        WorldManager.Instance._removing = value;
+    }
+    public void _Menu_RemoveOff()
+    {
+        WorldManager.Instance._removing = false;
+    }
+
+    public void _Menu_Add_Sources() //Display
+    {
+        Menu_Add_Panel2(prefabs_in, WorldManager.Instance.color_in);      
+    }
+    public void _Menu_Add_Process() //Display
+    {
+        Menu_Add_Panel2(prefabs_process, WorldManager.Instance.color_process);
+    }
+    public void _Menu_Add_Outs() //Display
+    {
+        Menu_Add_Panel2(prefabs_out, WorldManager.Instance.color_out);
+    }
+
+    void Menu_Add_Panel2(List<GameObject> prefabs_category, Color colorCategory)
     {
         ShowClearPannel2();
-        foreach (GameObject prefab in prefabs_in)
+        foreach (GameObject prefab in prefabs_category)
         {
             GameObject btn = Instantiate(prefabBouton);
             Image img = btn.GetComponent<Image>();
-            img.color = color_in;
+            img.color = colorCategory;
 
             Text txt = btn.GetComponentInChildren<Text>();
             txt.text = prefab.GetComponent<Tile>().name;
 
             btn.transform.SetParent(pannel2.transform, false);
-        }
-    }
-    public void _Menu_Add_Process()
-    {
-        ShowClearPannel2();
-        foreach (GameObject prefab in prefabs_process)
-        {
-            GameObject btn = Instantiate(prefabBouton);
-            Image img = btn.GetComponent<Image>();
-            img.color = color_process;
-
-            Text txt = btn.GetComponentInChildren<Text>();
-            txt.text = prefab.GetComponent<Tile>().name;
-
-            btn.transform.SetParent(pannel2.transform, false);
-        }
-    }
-    public void _Menu_Add_Outs()
-    {
-        ShowClearPannel2();
-        foreach (GameObject prefab in prefabs_out)
-        {
-            GameObject btn = Instantiate(prefabBouton);
-            Image img = btn.GetComponent<Image>();
-            img.color = color_out;
-
-            Text txt = btn.GetComponentInChildren<Text>();
-            txt.text = prefab.GetComponent<Tile>().name;
-
-            btn.transform.SetParent(pannel2.transform, false);
+            Button button = btn.GetComponent<Button>();
+            button.onClick.AddListener(delegate () { _Add(prefab); });
         }
     }
 
@@ -117,6 +122,13 @@ public class TilesMenu_Manager : MonoBehaviour
         pannel2.SetActive(true);
         while (pannel2.transform.childCount > 0)
             DestroyImmediate(pannel2.transform.GetChild(0).gameObject);
+    }
+
+    public void _Add(GameObject prefab)
+    {
+        Debug.Log(prefab.name);
+        Instantiate(prefab, Vector2.zero, Quaternion.identity, canvasWorld.transform);
+        //_Menu_Add();
     }
 
     // Update is called once per frame

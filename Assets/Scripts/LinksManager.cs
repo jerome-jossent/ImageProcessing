@@ -124,7 +124,15 @@ public class LinksManager : MonoBehaviour
         PrintDico();
     }
 
-
+    internal void DestroyAllLinksWith(Tile tile)
+    {
+        if (links.ContainsKey(tile))
+        {
+            foreach (var item in links[tile])
+                Destroy(item.Value.gameObject);
+            links.Remove(tile);
+        }
+    }
 
     void PrintDico()
     {
@@ -140,10 +148,8 @@ public class LinksManager : MonoBehaviour
                 msg += "\n" + link.Key.name + " : " + linkV.ToString();
             }
         }
-
-        Debug.Log(msg);
+        //Debug.Log(msg);
     }
-
 
     public static GameObject GetListener(GameObject c1, GameObject c2)
     {

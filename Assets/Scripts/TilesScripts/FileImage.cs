@@ -42,7 +42,7 @@ public class FileImage : Tile
 
         OpenCVForUnity.ImgprocModule.Imgproc.cvtColor(_mat, _mat, OpenCVForUnity.ImgprocModule.Imgproc.COLOR_BGR2RGB);
 
-        linksManager._NewData(this, _mat);
+        LinksManager.Instance._NewData(this, _mat);
     }
 
     public void _PickAFile()
@@ -56,7 +56,7 @@ public class FileImage : Tile
 
         if (file != "")
         {
-            Debug.Log(file);
+            //Debug.Log(file);
             _fileName = file;
             TMP_Text_fileName.text = _fileName;
             folder = System.IO.Path.GetDirectoryName(_fileName);

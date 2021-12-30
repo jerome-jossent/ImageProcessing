@@ -48,7 +48,7 @@ public class FolderImages : Tile
 
         OpenCVForUnity.ImgprocModule.Imgproc.cvtColor(_mat, _mat, OpenCVForUnity.ImgprocModule.Imgproc.COLOR_BGR2RGB);
 
-        linksManager._NewData(this, _mat);
+        LinksManager.Instance._NewData(this, _mat);
     }
 
     public void _PickFolder()
@@ -61,7 +61,7 @@ public class FolderImages : Tile
 
         if (selectedFolder != "")
         {
-            Debug.Log(selectedFolder);
+            //Debug.Log(selectedFolder);
             _folderName = selectedFolder;
             TMP_Text_fileName.text = _folderName;
             PlayerPrefs.SetString("FileImage_folder", _folderName);

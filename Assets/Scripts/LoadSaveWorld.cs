@@ -10,22 +10,6 @@ public class LoadSaveWorld : MonoBehaviour
     public string txt;
     string fileJson = @"C:\_Saves\ImageProcessing\save.json";
 
-    public bool save, load;
-    private void Update()
-    {
-        if (save)
-        {
-            save = false;
-            _Save();
-        }
-        if (load)
-        {
-            load = false;
-            _ClearAllChilds();
-            _Load();
-        }
-    }
-
     void _ClearAllChilds()
     {
         while (canvasWorld.transform.childCount > 0)
@@ -35,6 +19,7 @@ public class LoadSaveWorld : MonoBehaviour
 
     public void _Load()
     {
+        _ClearAllChilds();
         if (System.IO.File.Exists(fileJson))
         {
             txt = System.IO.File.ReadAllText(fileJson);
@@ -65,6 +50,21 @@ public class LoadSaveWorld : MonoBehaviour
                         ImageViewer imageViewer = go.GetComponent<ImageViewer>();
                         imageViewer._Init(wd.tilesInfo[i]);
                         t = imageViewer;
+                        break;
+                    case TileInfo.TileType.FolderImages:
+                        FolderImages folderImages = go.GetComponent<FolderImages>();
+                        folderImages._Init(wd.tilesInfo[i]);
+                        t = folderImages;
+                        break;
+                    case TileInfo.TileType.ToGray:
+                        ToGray toGray = go.GetComponent<ToGray>();
+                        toGray._Init(wd.tilesInfo[i]);
+                        t = toGray;
+                        break;
+                    case TileInfo.TileType.EdgesDetection:
+                        EdgesDetection edgesDetection = go.GetComponent<EdgesDetection>();
+                        edgesDetection._Init(wd.tilesInfo[i]);
+                        t = edgesDetection;
                         break;
                 }
                 if (t != null && !linksManager.links.ContainsKey(t))

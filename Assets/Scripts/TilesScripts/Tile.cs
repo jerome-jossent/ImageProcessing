@@ -21,10 +21,10 @@ public abstract class Tile : MonoBehaviour
     public abstract void _NewInput(object input);
     public abstract void _NewOutput(object output);
 
-    public LinksManager linksManager;
+    public TMPro.TMP_Text titre_TMP_Text;
+    public RawImage titre_fond;
+    public Image tuile_fond;
 
-    public TMPro.TMP_Text TMP_Text;
-    public RawImage rawImage;
     bool moving;
     Vector2 position_0;
     Vector3 mouse_position_0;
@@ -43,21 +43,46 @@ public abstract class Tile : MonoBehaviour
         if (rectTransform == null)
             rectTransform = gameObject.GetComponent<RectTransform>();
 
-        if (linksManager == null)        
-            linksManager = LinksManager.Instance;        
+        //if (linksManager == null)
+        //    linksManager = LinksManager.Instance;
+
+        GameObject goFond = transform.Find("Fond").gameObject;
+        tuile_fond = goFond.GetComponent<Image>();
+        tuile_fond.color = WorldManager.Instance.tuile_fond_Couleur_Init;
+
+        GameObject goContenant = goFond.transform.Find("Contenant").gameObject;
+        GameObject goTitre = goContenant.transform.Find("Titre").gameObject;
+        GameObject goTitreFond = goTitre.transform.Find("Fond").gameObject;
+        titre_fond = goTitreFond.GetComponent<RawImage>();
+        GameObject goNom = goTitreFond.transform.Find("Nom").gameObject;
+        titre_TMP_Text = goNom.GetComponent<TMPro.TMP_Text>();
+
+        tuile_fond.color = WorldManager.Instance.tuile_fond_Couleur_Init;
+
+        boxCollider2D = GetComponent<BoxCollider2D>();
+        boxCollider2D.offset = new Vector2(0, 0);
+        boxCollider2D.size = gameObject.GetComponent<RectTransform>().sizeDelta;
+
+        //PROBLEME AVEC LE SLIDER !!
+        //IDEE METTRE LE BOX COLLIDER QUE SUR LE TITRE !? (vraiment porté !? par le titre)
+
+
+        //RectTransform rt = goTitre.GetComponent<RectTransform>();
+        //rt.
+        //boxCollider2D.offset = .InverseTransformPoint(myRectTransform.position) ? rt..rect.position;// new Vector2(0, 0);
+        //boxCollider2D.size = rt.sizeDelta;
+
     }
 
     public void _Init(TileInfo tileInfo)
     {
+        Start();
         _tileInfo = tileInfo;
-        TMP_Text.text = _tileInfo.name;
-        rawImage.color = _tileInfo.title_color.GetColor();
+        titre_TMP_Text.text = _tileInfo.name;
+        titre_fond.color = _tileInfo.title_color.GetColor();
         rectTransform = gameObject.GetComponent<RectTransform>();
 
         rectTransform.sizeDelta = _tileInfo.size;
-        boxCollider2D = GetComponent<BoxCollider2D>();
-        boxCollider2D.offset = new Vector2(0, 0);
-        boxCollider2D.size = gameObject.GetComponent<RectTransform>().sizeDelta;
 
         transform.localScale = Vector3.one;
         transform.localPosition = _tileInfo.local_position;
@@ -78,7 +103,7 @@ public abstract class Tile : MonoBehaviour
             //button.onClick.RemoveAllListeners();
             button.onClick = new Button.ButtonClickedEvent();
             // /!\ Non visible dans l'inspecteur !!!!!!!!!
-            button.onClick.AddListener(delegate () { linksManager._Click(GOOut); });
+            button.onClick.AddListener(delegate () { LinksManager.Instance._Click(GOOut); });
         }
 
         GameObject GOConnectors_Ins = GOConnectors.transform.Find("Ins").gameObject;
@@ -89,20 +114,45 @@ public abstract class Tile : MonoBehaviour
             //button.onClick.RemoveAllListeners();
             button.onClick = new Button.ButtonClickedEvent();
             // /!\ Non visible dans l'inspecteur !!!!!!!!!
-            button.onClick.AddListener(delegate () { linksManager._Click(GOIn); });
+            button.onClick.AddListener(delegate () { LinksManager.Instance._Click(GOIn); });
         }
     }
 
     public void OnMouseDown()
     {
-        moving = true;
-        position_0 = transform.position;
-        mouse_position_0 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (WorldManager.Instance._removing)
+        {
+            //destroy links
+            LinksManager.Instance.DestroyAllLinksWith(this);
+
+            //destroy tile
+            Destroy(gameObject);
+            Minimap_Manager.Instance._OneTileHasChanged();
+        }
+        else
+        {
+            moving = true;
+            position_0 = transform.position;
+            mouse_position_0 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 
     public void OnMouseUp()
     {
         moving = false;
+    }
+
+    public void OnMouseEnter()
+    {
+        if (WorldManager.Instance._removing)
+            tuile_fond.color = WorldManager.Instance.tuile_fond_Couleur_Delete;
+        else
+            tuile_fond.color = WorldManager.Instance.tuile_fond_Couleur_Selected;
+    }
+
+    public void OnMouseExit()
+    {
+        tuile_fond.color = WorldManager.Instance.tuile_fond_Couleur_Init;
     }
 
     bool activated = true;
@@ -123,13 +173,18 @@ public abstract class Tile : MonoBehaviour
 
             _tileInfo.local_position = transform.localPosition;
             _tileInfo.size = rectTransform.sizeDelta;
+
+            Minimap_Manager.Instance._OneTileHasChanged();
         }
     }
 }
 
 public class TileInfo
 {
-    public enum TileType { None, FileImage, ImageViewer, FolderImages }
+    public enum TileType { None, FileImage, ImageViewer, FolderImages,
+        ToGray,
+        EdgesDetection
+    }
 
     [JsonConverter(typeof(StringEnumConverter))]
     public TileType type { get; set; }
@@ -154,7 +209,7 @@ public class TileInfo
     {
         if (this.tile == null)
             this.tile = tile;
-        name = tile.TMP_Text.text;
-        title_color = new SerializableColor(tile.rawImage.color);
+        name = tile.titre_TMP_Text.text;
+        title_color = new SerializableColor(tile.titre_fond.color);
     }
 }
