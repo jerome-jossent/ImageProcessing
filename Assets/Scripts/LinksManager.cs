@@ -112,6 +112,9 @@ public class LinksManager : MonoBehaviour
 
         GameObject glk = new GameObject();
         glk.transform.SetParent(gameObject_links.transform);
+
+        glk.name = t_source + " -> " + t_listener;
+
         Link lk = glk.AddComponent<Link>();
 
         links[t_source].Add(t_listener, lk);
@@ -194,6 +197,9 @@ public class LinksManager : MonoBehaviour
     {
         if (links.ContainsKey(tile_output))
             foreach (Link link in links[tile_output].Values)
+            {
+                //Debug.Log(link.name);
                 link._point_End._NewInput(data);
+            }
     }
 }

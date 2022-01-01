@@ -49,9 +49,13 @@ public class FileImage : Tile
     {
         string folder = PlayerPrefs.GetString("FileImage_folder");
 
-        string extensions = "";
 
-        string file = UnityEditor.EditorUtility.OpenFilePanel("Select a picture file", folder, extensions);
+        GameObject GOFileBrowser = GameObject.Find("FileBrowser");
+        Crosstales.FB.FileBrowser fileBrowser = GOFileBrowser.GetComponent<Crosstales.FB.FileBrowser>();
+        Crosstales.FB.ExtensionFilter[] ext = new Crosstales.FB.ExtensionFilter[] { new Crosstales.FB.ExtensionFilter { Name = "All", Extensions = new string[] { "*" } } };
+        string file = fileBrowser.OpenSingleFile("Select a picture file", folder, "", ext);
+        //        string extensions = "";
+        //string file = UnityEditor.EditorUtility.OpenFilePanel("Select a picture file", folder, extensions);
 
 
         if (file != "")

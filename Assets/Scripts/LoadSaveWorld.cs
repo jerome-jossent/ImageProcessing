@@ -36,37 +36,58 @@ public class LoadSaveWorld : MonoBehaviour
                 go.name = ti.name;
                 go.transform.SetParent(canvasWorld.transform);
                 Tile t = null;
-                switch (ti.type)
+
+                if (ti.type==TileInfo.TileType.None)
                 {
-                    case TileInfo.TileType.None:
-                        Debug.Log("erreur loading " + ti.name);
-                        break;
-                    case TileInfo.TileType.FileImage:
-                        FileImage fileImage = go.GetComponent<FileImage>();
-                        fileImage._Init(wd.tilesInfo[i]);
-                        t = fileImage;
-                        break;
-                    case TileInfo.TileType.ImageViewer:
-                        ImageViewer imageViewer = go.GetComponent<ImageViewer>();
-                        imageViewer._Init(wd.tilesInfo[i]);
-                        t = imageViewer;
-                        break;
-                    case TileInfo.TileType.FolderImages:
-                        FolderImages folderImages = go.GetComponent<FolderImages>();
-                        folderImages._Init(wd.tilesInfo[i]);
-                        t = folderImages;
-                        break;
-                    case TileInfo.TileType.ToGray:
-                        ToGray toGray = go.GetComponent<ToGray>();
-                        toGray._Init(wd.tilesInfo[i]);
-                        t = toGray;
-                        break;
-                    case TileInfo.TileType.EdgesDetection:
-                        EdgesDetection edgesDetection = go.GetComponent<EdgesDetection>();
-                        edgesDetection._Init(wd.tilesInfo[i]);
-                        t = edgesDetection;
-                        break;
+                    Debug.Log("erreur loading " + ti.name);
                 }
+                else
+                {
+                    System.Type typ = System.Type.GetType(ti.type.ToString());
+                    //System.Reflection.MethodInfo method
+                    //     = typ.GetMethod("Bar", BindingFlags.Static | BindingFlags.Public);
+                    //method.Invoke(null, null);
+
+                    //myObject = (MyAbstractClass)Activator.CreateInstance("AssemblyName", "TypeName");
+//                    var myObject = (Tile)System.Activator.CreateInstance go.GetComponent<typ>(); (MyAbstractClass)Activator.CreateInstance("AssemblyName", "TypeName");
+
+                    var SpecificTile = go.GetComponent(ti.type.ToString());
+                    Tile tile = (Tile)SpecificTile;
+                    tile._Init(wd.tilesInfo[i]);
+                    t = tile;
+                }
+
+                //switch (ti.type)
+                //{
+                //    case TileInfo.TileType.None:
+                //        Debug.Log("erreur loading " + ti.name);
+                //        break;
+                //    case TileInfo.TileType.FileImage:
+                //        FileImage fileImage = go.GetComponent<FileImage>();
+                //        fileImage._Init(wd.tilesInfo[i]);
+                //        t = fileImage;
+                //        break;
+                //    case TileInfo.TileType.ImageViewer:
+                //        ImageViewer imageViewer = go.GetComponent<ImageViewer>();
+                //        imageViewer._Init(wd.tilesInfo[i]);
+                //        t = imageViewer;
+                //        break;
+                //    case TileInfo.TileType.FolderImages:
+                //        FolderImages folderImages = go.GetComponent<FolderImages>();
+                //        folderImages._Init(wd.tilesInfo[i]);
+                //        t = folderImages;
+                //        break;
+                //    case TileInfo.TileType.ToGray:
+                //        ToGray toGray = go.GetComponent<ToGray>();
+                //        toGray._Init(wd.tilesInfo[i]);
+                //        t = toGray;
+                //        break;
+                //    case TileInfo.TileType.EdgesDetection:
+                //        EdgesDetection edgesDetection = go.GetComponent<EdgesDetection>();
+                //        edgesDetection._Init(wd.tilesInfo[i]);
+                //        t = edgesDetection;
+                //        break;
+                //}
                 if (t != null && !linksManager.links.ContainsKey(t))
                     linksManager.links.Add(t, new Dictionary<Tile, Link>());
             }

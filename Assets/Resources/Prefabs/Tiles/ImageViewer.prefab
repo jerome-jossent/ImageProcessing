@@ -85,6 +85,8 @@ MonoBehaviour:
   titre_fond: {fileID: 0}
   tuile_fond: {fileID: 0}
   image: {fileID: 1916742322099107676}
+  rotationAngle: 0
+  rotationAngle_prec: 0
 --- !u!1 &2926318445837365017
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,13 +147,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3520252989655588217}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7683982624961301059}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}

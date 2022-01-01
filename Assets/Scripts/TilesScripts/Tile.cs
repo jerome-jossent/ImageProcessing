@@ -62,16 +62,6 @@ public abstract class Tile : MonoBehaviour
         boxCollider2D = GetComponent<BoxCollider2D>();
         boxCollider2D.offset = new Vector2(0, 0);
         boxCollider2D.size = gameObject.GetComponent<RectTransform>().sizeDelta;
-
-        //PROBLEME AVEC LE SLIDER !!
-        //IDEE METTRE LE BOX COLLIDER QUE SUR LE TITRE !? (vraiment porté !? par le titre)
-
-
-        //RectTransform rt = goTitre.GetComponent<RectTransform>();
-        //rt.
-        //boxCollider2D.offset = .InverseTransformPoint(myRectTransform.position) ? rt..rect.position;// new Vector2(0, 0);
-        //boxCollider2D.size = rt.sizeDelta;
-
     }
 
     public void _Init(TileInfo tileInfo)
@@ -137,6 +127,11 @@ public abstract class Tile : MonoBehaviour
         }
     }
 
+    public void _SetMovingOff()//pour que les sliders ne soient pas gênés
+    {
+        moving = false;
+    }
+
     public void OnMouseUp()
     {
         moving = false;
@@ -181,9 +176,12 @@ public abstract class Tile : MonoBehaviour
 
 public class TileInfo
 {
-    public enum TileType { None, FileImage, ImageViewer, FolderImages,
+    public enum TileType
+    {
+        None, FileImage, ImageViewer, FolderImages,
         ToGray,
-        EdgesDetection
+        EdgesDetection,
+        SaveImagesToFolder
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

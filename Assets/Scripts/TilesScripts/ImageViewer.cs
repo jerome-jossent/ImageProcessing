@@ -12,6 +12,10 @@ public class ImageViewer : Tile
     public RawImage image;
     [Newtonsoft.Json.JsonIgnore]
     public object input;
+    Texture2D texture2D;
+
+    public float rotationAngle, rotationAngle_prec;
+
     public new void Start()
     {
         base.Start();
@@ -30,6 +34,16 @@ public class ImageViewer : Tile
         typeGeneric = TileTypeGeneric.Out;
     }
 
+    //public void Update()
+    //{
+    //    if (rotationAngle != rotationAngle_prec)
+    //    {
+    //        rotationAngle_prec = rotationAngle;
+    //        image.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, rotationAngle);
+        
+    //    }
+    //}
+
     public override void _NewInput(object input)
     {
         if (input == null)
@@ -40,7 +54,7 @@ public class ImageViewer : Tile
 
         string typ = input.GetType().ToString();
         //Debug.Log(typ);
-        Texture2D texture2D;
+        //Texture2D texture2D;
         switch (typ)
         {
             case "UnityEngine.Texture2D":
@@ -49,12 +63,25 @@ public class ImageViewer : Tile
                 break;
 
             case "OpenCVForUnity.CoreModule.Mat":
-                Mat imgMat = (Mat)input; ;
+                Mat imgMat = (Mat)input;
+
                 texture2D = new Texture2D(imgMat.cols(), imgMat.rows(), TextureFormat.RGBA32, false);
-                Utils.setDebugMode(true);
-                Utils.matToTexture2D(imgMat, texture2D);
-                Utils.setDebugMode(false);
-                image.texture = texture2D;
+
+                if (imgMat.empty())
+                {
+                    Debug.Log("IMAGE VIDE !?");
+                    image.texture = null;
+                }
+                else
+                {
+                    Utils.setDebugMode(true);
+
+                    Core.flip(imgMat, imgMat, 0);
+
+                    Utils.matToTexture2D(imgMat, texture2D);
+                    Utils.setDebugMode(false);
+                    image.texture = texture2D;
+                }
                 break;
         }
     }
@@ -81,8 +108,16 @@ public class ImageViewer : Tile
         _NewInput(imgMat);
     }
 
-    //void OnValidate()
-    //{
-    //    Start();
-    //}
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            WorldManager.Instance._ImageViewerMax_Show(texture2D);
+        }
+
+        //if (Input.GetMouseButtonUp(1))
+        //{
+        //    WorldManager.Instance._ImageViewerMax_Hide();
+        //}
+    }
 }

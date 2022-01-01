@@ -44,9 +44,19 @@ public class FolderImages : Tile
     {
         _mat = new Mat();
         FileInfo fi = (FileInfo)output;
+
+        //Debug.Log(fi.FullName);
+
+        //TODO PopUp !?
+        //attention pose problème avec des noms de fichiers avec des accents
         _mat = OpenCVForUnity.ImgcodecsModule.Imgcodecs.imread(fi.FullName);
 
         OpenCVForUnity.ImgprocModule.Imgproc.cvtColor(_mat, _mat, OpenCVForUnity.ImgprocModule.Imgproc.COLOR_BGR2RGB);
+        if (_mat.empty())
+        {
+            //TODO PopUp !?
+            Debug.Log("IMAGE VIDE !? : " + fi.FullName);
+        }
 
         LinksManager.Instance._NewData(this, _mat);
     }
@@ -55,9 +65,13 @@ public class FolderImages : Tile
     {
         string folder = PlayerPrefs.GetString("FileImage_folder");
 
-        string defaultname = "";
+        //string defaultname = "";
+        //string selectedFolder = UnityEditor.EditorUtility.OpenFolderPanel("Select folder of pictures file", folder, defaultname);
 
-        string selectedFolder = UnityEditor.EditorUtility.OpenFolderPanel("Select folder of pictures file", folder, defaultname);
+        GameObject GOFileBrowser = GameObject.Find("FileBrowser");
+        Crosstales.FB.FileBrowser fileBrowser = GOFileBrowser.GetComponent<Crosstales.FB.FileBrowser>();
+        Crosstales.FB.ExtensionFilter[] ext = new Crosstales.FB.ExtensionFilter[] { new Crosstales.FB.ExtensionFilter { Name = "All", Extensions = new string[] { "*" } } };
+        string selectedFolder = fileBrowser.OpenSingleFolder("Select pictures folder", folder);
 
         if (selectedFolder != "")
         {

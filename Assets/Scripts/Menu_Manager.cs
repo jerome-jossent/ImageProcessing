@@ -57,11 +57,16 @@ public class Menu_Manager : MonoBehaviour
     {
         if (Menu_Boutons.activeSelf)
         {
+            //Menu OFF
             pannel1.SetActive(false);
             pannel2.SetActive(false);
+            _Menu_RemoveOff();
+            Menu_Boutons.SetActive(false);
         }
-
-        Menu_Boutons.SetActive(!Menu_Boutons.activeSelf);
+        else
+        {
+            Menu_Boutons.SetActive(true);
+        }
     }
 
     public void _Menu_Add() //Display/Hide
@@ -70,6 +75,7 @@ public class Menu_Manager : MonoBehaviour
         {
             pannel1.SetActive(false);
             pannel2.SetActive(false);
+            _Menu_RemoveOff();
         }
         else
         {
@@ -88,7 +94,7 @@ public class Menu_Manager : MonoBehaviour
 
     public void _Menu_Add_Sources() //Display
     {
-        Menu_Add_Panel2(prefabs_in, WorldManager.Instance.color_in);      
+        Menu_Add_Panel2(prefabs_in, WorldManager.Instance.color_in);
     }
     public void _Menu_Add_Process() //Display
     {
@@ -127,8 +133,25 @@ public class Menu_Manager : MonoBehaviour
     public void _Add(GameObject prefab)
     {
         Debug.Log(prefab.name);
-        Instantiate(prefab, Vector2.zero, Quaternion.identity, canvasWorld.transform);
-        //_Menu_Add();
+
+        GameObject go = Instantiate(prefab, Vector2.zero, Quaternion.identity, canvasWorld.transform);
+        string name = GetNewName(prefab.name);
+        go.name = name;
+    }
+
+    string GetNewName(string racine)
+    {
+        bool OK = false;
+        int i = 1;
+        string rep = racine + " " + i;
+        while (!OK)
+        {
+           Transform tr = canvasWorld.transform.Find(rep);
+           OK = (tr == null);
+            if (tr != null)
+                rep = racine + " " + ++i;
+        }
+        return rep;
     }
 
     // Update is called once per frame
