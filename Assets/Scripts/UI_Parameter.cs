@@ -14,29 +14,22 @@ public class UI_Parameter : MonoBehaviour
         label_val.text = slider.value.ToString();
     }
 
-    public void Start()
-    {
-        //SetMoveOFF
-
-        //ShowValueFromSlider
-
-        //SetParamValue
-    }
-
-    public void _Set(string newLabel, float valmin, float valmax, string description)
+    public void _Set(string newLabel, float valmin, float valmax, float valinit, string description)
     {
         label_nom.text = newLabel;
         slider.wholeNumbers = false;
         slider.minValue = valmin;
         slider.maxValue = valmax;
+        slider.value = valinit;
         this.description = description;
     }
-    public void _Set(string newLabel, int valmin, int valmax, string description)
+    public void _Set(string newLabel, int valmin, int valmax, int valinit, string description)
     {
         label_nom.text = newLabel;
         slider.wholeNumbers = true;
         slider.minValue = valmin;
         slider.maxValue = valmax;
+        slider.value = valinit;
         this.description = description;
     }
 }

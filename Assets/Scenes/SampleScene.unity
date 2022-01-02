@@ -192,7 +192,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -96, y: -54}
+  m_AnchoredPosition: {x: -100.8, y: -63.8}
   m_SizeDelta: {x: 192, y: 108}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114792882
@@ -648,7 +648,7 @@ RectTransform:
   m_GameObject: {fileID: 254215433}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_Children:
   - {fileID: 932419968}
   m_Father: {fileID: 1469160421}
@@ -3794,10 +3794,11 @@ MonoBehaviour:
   color_in: {r: 0.19698583, g: 0.50646293, b: 0.7830189, a: 1}
   color_process: {r: 0.972549, g: 0.9137255, b: 0.23529412, a: 1}
   color_out: {r: 0.17504281, g: 0.6698113, b: 0.11795414, a: 1}
-  tuile_fond_Couleur_Init: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
-  tuile_fond_Couleur_Selected: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
+  tuile_fond_Couleur_Init: {r: 0.1981132, g: 0.1974902, b: 0.1974902, a: 1}
+  tuile_fond_Couleur_Selected: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
   tuile_fond_Couleur_Delete: {r: 0.6792453, g: 0.19651118, b: 0.19651118, a: 1}
   ImageViewerMax: {fileID: 2026233289}
+  isShowingImageInFullScreen: 0
 --- !u!114 &2062374303
 MonoBehaviour:
   m_ObjectHideFlags: 0

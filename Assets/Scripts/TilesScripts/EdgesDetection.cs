@@ -9,6 +9,7 @@ using TMPro;
 
 public class EdgesDetection : Tile
 {
+    #region PARAMETERS
     public Mat _edges;
 
     public enum Algo { Sobel, Canny }
@@ -19,8 +20,8 @@ public class EdgesDetection : Tile
     public Algo_sobel _algo_Sobel;
     public int _sobel_ddepth;
     [Space(10)]
-    public double _canny_lower_threshold;
-    public double _canny_upper_threshold;
+    public int _canny_lower_threshold;
+    public int _canny_upper_threshold;
 
     public TMPro.TMP_Dropdown _algoDD;
     public GameObject Param_Sobel;
@@ -31,23 +32,9 @@ public class EdgesDetection : Tile
     public UI_Parameter canny_upper_threshold;
 
     Mat _mat_input;
+    #endregion
 
-    public void _Set_sobel_ddepth()
-    {
-        _sobel_ddepth = (int)sobel_ddepth.slider.value;
-        _NewOutput(_mat_input);
-    }
-    public void _Set_canny_lower_threshold()
-    {
-        _canny_lower_threshold = canny_lower_threshold.slider.value;
-        _NewOutput(_mat_input);
-    }
-    public void _Set_canny_upper_threshold()
-    {
-        _canny_upper_threshold = canny_upper_threshold.slider.value;
-        _NewOutput(_mat_input);
-    }
-
+    #region UNITY METHODS
     public new void Start()
     {
         base.Start();
@@ -56,17 +43,45 @@ public class EdgesDetection : Tile
             _tileInfo = new TileInfo(this);
         _tileInfo.type = TileInfo.TileType.EdgesDetection;
 
+        _sobel_ddepth = int.Parse(Get("_sobel_ddepth", varType._int));
+        _canny_lower_threshold = int.Parse(Get("_canny_lower_threshold", varType._int));
+        _canny_upper_threshold = int.Parse(Get("_canny_upper_threshold", varType._int));
+
         FillDropDownWithEnum(_algoDD, typeof(Algo));
-        sobel_ddepth._Set("ddepth", -1, 5,
+        sobel_ddepth._Set("ddepth", -1, 5, _sobel_ddepth,
             "ddepth - Une variable entière représentant la profondeur de l’image (-1)\n" +
             "dx - Une variable entière représentant la dérivée x. (0 ou 1)\n" +
             "dy - Une variable entière représentant la dérivée y. (0 ou 1)");
-        canny_lower_threshold._Set("seuil bas", 0, 255, "");
-        canny_upper_threshold._Set("seuil haut", 0, 255, "");
+        canny_lower_threshold._Set("seuil bas", 0, 255, _canny_lower_threshold, "");
+        canny_upper_threshold._Set("seuil haut", 0, 255, _canny_upper_threshold, "");
     }
 
+    #endregion
+
+    #region SET PARAMETERS
+    public void _Set_sobel_ddepth()
+    {
+        _sobel_ddepth = (int)sobel_ddepth.slider.value;
+        Set("_sobel_ddepth", _sobel_ddepth.ToString());
+        _NewOutput(_mat_input);
+    }
+    public void _Set_canny_lower_threshold()
+    {
+        _canny_lower_threshold = (int)canny_lower_threshold.slider.value;
+        Set("_canny_lower_threshold", _canny_lower_threshold.ToString());
+        _NewOutput(_mat_input);
+    }
+    public void _Set_canny_upper_threshold()
+    {
+        _canny_upper_threshold = (int)canny_upper_threshold.slider.value;
+        Set("_canny_upper_threshold", _canny_upper_threshold.ToString());
+        _NewOutput(_mat_input);
+    }
+    #endregion
+
+    #region UI
     void FillDropDownWithEnum(TMP_Dropdown dd, Type type)
-    {//FillDropDownWithEnum(_algoDD, typeof(Algo));
+    {   // ex : FillDropDownWithEnum(_algoDD, typeof(Algo));
         options = Enum.GetNames(type).ToList();
         _algoDD.ClearOptions();
         _algoDD.AddOptions(options);
@@ -87,9 +102,12 @@ public class EdgesDetection : Tile
                 Param_Canny.SetActive(true);
                 break;
         }
+        Set("_algo", _algo.ToString());
         _NewOutput(_mat_input);
     }
+    #endregion
 
+    #region INPUT_OUTPUT
     public override void _NewInput(object input)
     {
         _NewOutput(input);
@@ -121,4 +139,5 @@ public class EdgesDetection : Tile
         }
         LinksManager.Instance._NewData(this, _edges);
     }
+#endregion
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Link : MonoBehaviour
 {
+    #region PARAMETERS
     public LinkInfo _linkInfo;
 
     public Tile _point_Start;
@@ -17,7 +18,9 @@ public class Link : MonoBehaviour
     float thickness;
 
     Vector3[] points;
+    #endregion
 
+    #region UNITY METHODS
     void Start()
     {
         points = new Vector3[2];
@@ -44,7 +47,9 @@ public class Link : MonoBehaviour
     {
         Debug.Log("TODO");
     }
+    #endregion
 
+    #region SET PARAMETERS
     internal void _SetStartEnd(GameObject connector1, GameObject connector2)
     {
         _connecteur_Start = LinksManager.GetSource(connector1, connector2);
@@ -64,6 +69,7 @@ public class Link : MonoBehaviour
     {
         this.thickness = thickness;
     }
+    #endregion
 
     public new string ToString()
     {

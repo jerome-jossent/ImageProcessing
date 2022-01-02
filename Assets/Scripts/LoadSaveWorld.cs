@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class LoadSaveWorld : MonoBehaviour
 {
+    #region PARAMETERS
     public LinksManager linksManager;
     public Canvas canvasWorld;
 
     public string txt;
     string fileJson = @"C:\_Saves\ImageProcessing\save.json";
-
-    void _ClearAllChilds()
-    {
-        while (canvasWorld.transform.childCount > 0)
-            DestroyImmediate(canvasWorld.transform.GetChild(0).gameObject);
-        linksManager.links = new Dictionary<Tile, Dictionary<Tile, Link>>();
-    }
+    #endregion
 
     public void _Load()
     {
@@ -43,51 +38,13 @@ public class LoadSaveWorld : MonoBehaviour
                 }
                 else
                 {
-                    System.Type typ = System.Type.GetType(ti.type.ToString());
-                    //System.Reflection.MethodInfo method
-                    //     = typ.GetMethod("Bar", BindingFlags.Static | BindingFlags.Public);
-                    //method.Invoke(null, null);
-
-                    //myObject = (MyAbstractClass)Activator.CreateInstance("AssemblyName", "TypeName");
-//                    var myObject = (Tile)System.Activator.CreateInstance go.GetComponent<typ>(); (MyAbstractClass)Activator.CreateInstance("AssemblyName", "TypeName");
-
+                    //Chargement du script attendu
                     var SpecificTile = go.GetComponent(ti.type.ToString());
                     Tile tile = (Tile)SpecificTile;
                     tile._Init(wd.tilesInfo[i]);
                     t = tile;
                 }
 
-                //switch (ti.type)
-                //{
-                //    case TileInfo.TileType.None:
-                //        Debug.Log("erreur loading " + ti.name);
-                //        break;
-                //    case TileInfo.TileType.FileImage:
-                //        FileImage fileImage = go.GetComponent<FileImage>();
-                //        fileImage._Init(wd.tilesInfo[i]);
-                //        t = fileImage;
-                //        break;
-                //    case TileInfo.TileType.ImageViewer:
-                //        ImageViewer imageViewer = go.GetComponent<ImageViewer>();
-                //        imageViewer._Init(wd.tilesInfo[i]);
-                //        t = imageViewer;
-                //        break;
-                //    case TileInfo.TileType.FolderImages:
-                //        FolderImages folderImages = go.GetComponent<FolderImages>();
-                //        folderImages._Init(wd.tilesInfo[i]);
-                //        t = folderImages;
-                //        break;
-                //    case TileInfo.TileType.ToGray:
-                //        ToGray toGray = go.GetComponent<ToGray>();
-                //        toGray._Init(wd.tilesInfo[i]);
-                //        t = toGray;
-                //        break;
-                //    case TileInfo.TileType.EdgesDetection:
-                //        EdgesDetection edgesDetection = go.GetComponent<EdgesDetection>();
-                //        edgesDetection._Init(wd.tilesInfo[i]);
-                //        t = edgesDetection;
-                //        break;
-                //}
                 if (t != null && !linksManager.links.ContainsKey(t))
                     linksManager.links.Add(t, new Dictionary<Tile, Link>());
             }
@@ -103,6 +60,13 @@ public class LoadSaveWorld : MonoBehaviour
                 linksManager.MakeLink(connector1, connector2);
             }
         }
+    }
+
+    void _ClearAllChilds()
+    {
+        while (canvasWorld.transform.childCount > 0)
+            DestroyImmediate(canvasWorld.transform.GetChild(0).gameObject);
+        linksManager.links = new Dictionary<Tile, Dictionary<Tile, Link>>();
     }
 
     GameObject FindChildOrGrandChild(GameObject parent, string name)

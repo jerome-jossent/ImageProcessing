@@ -5,45 +5,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//[ExecuteInEditMode] //Normal & Edit Mode
 public class ImageViewer : Tile
 {
+    #region PARAMETERS
     [Newtonsoft.Json.JsonIgnore]
     public RawImage image;
     [Newtonsoft.Json.JsonIgnore]
     public object input;
     Texture2D texture2D;
+    RectTransform imageRectTransform;
 
     public float rotationAngle, rotationAngle_prec;
+    #endregion
 
+    #region UNITY METHODS
     public new void Start()
     {
         base.Start();
-        //TileInfo ti = new TileInfo()
-        //{
-        //    name = "ImageViewer 1",
-        //    title_color = new SerializableColor(0.2f, 0.6f, 0.2f),
-        //    type = TileInfo.TileType.ImageViewer,
-        //    local_position = new Vector2(370, 70),
-        //    size = new Vector2(300, 360)
-        //};
-        //_Init(ti);
         if (_tileInfo == null)
             _tileInfo = new TileInfo(this);
         _tileInfo.type = TileInfo.TileType.ImageViewer;
         typeGeneric = TileTypeGeneric.Out;
+        imageRectTransform = image.GetComponent<RectTransform>();
     }
+    public new void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            WorldManager.Instance._ImageViewerMax_Show(texture2D);
+        }
+    }
+    #endregion
 
-    //public void Update()
-    //{
-    //    if (rotationAngle != rotationAngle_prec)
-    //    {
-    //        rotationAngle_prec = rotationAngle;
-    //        image.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, rotationAngle);
-        
-    //    }
-    //}
-
+    #region INPUT_OUTPUT
     public override void _NewInput(object input)
     {
         if (input == null)
@@ -53,8 +47,6 @@ public class ImageViewer : Tile
         }
 
         string typ = input.GetType().ToString();
-        //Debug.Log(typ);
-        //Texture2D texture2D;
         switch (typ)
         {
             case "UnityEngine.Texture2D":
@@ -75,11 +67,30 @@ public class ImageViewer : Tile
                 else
                 {
                     Utils.setDebugMode(true);
-
-                    Core.flip(imgMat, imgMat, 0);
-
-                    Utils.matToTexture2D(imgMat, texture2D);
+                    Mat copy = imgMat.clone();
+                    Core.flip(copy, copy, 0);
+                    Utils.matToTexture2D(copy, texture2D);
                     Utils.setDebugMode(false);
+
+                    //AutoSizeMax
+                    float sc_w = 280;
+                    int sc_h = 250;
+                    float sc_r = sc_w / sc_h;
+                    float im_r = (float)texture2D.width / texture2D.height;
+
+                    float w, h;
+                    if (im_r > sc_r) //largeur image > largeur écran
+                    {
+                        w = sc_w;
+                        h = w / im_r;
+                    }
+                    else
+                    {
+                        h = sc_h;
+                        w = h * im_r;
+                    }
+                    imageRectTransform.sizeDelta = new Vector2(w, h);
+
                     image.texture = texture2D;
                 }
                 break;
@@ -90,6 +101,7 @@ public class ImageViewer : Tile
     {
         throw new System.NotImplementedException();
     }
+    #endregion
 
     public void _Test()
     {
@@ -104,20 +116,6 @@ public class ImageViewer : Tile
         Utils.matToTexture2D(imgMat, texture);
         Utils.setDebugMode(false);
 
-        //_NewInput(texture);
         _NewInput(imgMat);
-    }
-
-    private void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            WorldManager.Instance._ImageViewerMax_Show(texture2D);
-        }
-
-        //if (Input.GetMouseButtonUp(1))
-        //{
-        //    WorldManager.Instance._ImageViewerMax_Hide();
-        //}
     }
 }

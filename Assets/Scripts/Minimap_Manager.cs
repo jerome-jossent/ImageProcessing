@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Minimap_Manager : MonoBehaviour
 {
+    #region PARAMETERS
     public GameObject canvasWorld;
     public Camera cameraMinimap;
     public Camera cameraMain;
 
-    static bool oneTileHasChanged;
+    bool oneTileHasChanged;
+    #endregion
 
+    #region SINGLETON
     public static Minimap_Manager Instance { get; internal set; }
 
     void Awake()
@@ -19,12 +22,10 @@ public class Minimap_Manager : MonoBehaviour
         else
             Destroy(this);
     }
-    void Start()
-    {
-        oneTileHasChanged = true;
-    }
+    #endregion
 
-    public void _OneTileHasChanged()
+    #region UNITY METHODS
+    void Start()
     {
         oneTileHasChanged = true;
     }
@@ -50,7 +51,15 @@ public class Minimap_Manager : MonoBehaviour
                 float differenceInSize = targetRatio / screenRatio;
                 cameraMinimap.orthographicSize = bounds.size.y / 200 * differenceInSize;
             }
+
+            Camera_MoveZoom.Instance.UpdateCameraLimits(bounds);
         }
+    }
+    #endregion
+
+    public void _OneTileHasChanged()
+    {
+        oneTileHasChanged = true;
     }
 
     static Bounds GetLocalBoundsForObject(GameObject go)

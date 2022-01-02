@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class LinksManager : MonoBehaviour
 {
+    #region PARAMETERS
     public Canvas canvas;
     RectTransform canvas_rect;
 
@@ -22,14 +23,21 @@ public class LinksManager : MonoBehaviour
     public Material material;
     LineRenderer lr;
     Vector3[] points;
+    #endregion
 
+    #region SINGLETON
     public static LinksManager Instance { get; internal set; }
-
-    void Start()
+    private void Awake()
     {
         if (Instance != null)
             Destroy(this);
         Instance = this;
+    }
+    #endregion
+
+    #region UNITY METHODS
+    void Start()
+    {
 
         canvas_rect = canvas.GetComponent<RectTransform>();
         if (thickness == 0) thickness = 0.05f;
@@ -46,8 +54,35 @@ public class LinksManager : MonoBehaviour
             gameObject_links = new GameObject(GameObject_links);
             gameObject_links.transform.SetParent(transform);
         }
+    }    
+    
+    void Update()
+    {
+        if (gameObject_current != null)
+        {
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas_rect, Input.mousePosition, Camera.main, out points[1]);
+            points[1].z = 0;
+            lr.SetPositions(points);
+        }
     }
 
+    void OnValidate()//UTILE ?????????
+    {
+        if (links != null)
+        {
+            foreach (Dictionary<Tile, Link> _links in links.Values)
+            {
+                foreach (Link link in _links.Values)
+                {
+                    link._SetMaterial(material);
+                    link._SetThickness(thickness);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region UI
     public void _Click(GameObject Connector)
     {
         if (gameObject_current == null)
@@ -75,18 +110,7 @@ public class LinksManager : MonoBehaviour
             lr.enabled = false;
         }
     }
-
-    void Update()
-    {
-        if (gameObject_current != null)
-        {
-            //points[1] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //points[1] = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-            RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas_rect, Input.mousePosition, Camera.main, out points[1]);
-            points[1].z = 0;
-            lr.SetPositions(points);
-        }
-    }
+    #endregion
 
     public void MakeLink(GameObject connecteur1, GameObject connecteur2)
     {
@@ -176,21 +200,6 @@ public class LinksManager : MonoBehaviour
 
         Debug.Log("==GetSource ERREUR==" + c1.name + " " + c2.name);
         throw new System.NotImplementedException();
-    }
-
-    void OnValidate()
-    {
-        if (links != null)
-        {
-            foreach (Dictionary<Tile, Link> _links in links.Values)
-            {
-                foreach (Link link in _links.Values)
-                {
-                    link._SetMaterial(material);
-                    link._SetThickness(thickness);
-                }
-            }
-        }
     }
 
     internal void _NewData(Tile tile_output, object data)

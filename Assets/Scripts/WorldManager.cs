@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class WorldManager : MonoBehaviour
 {
+    #region PARAMETERS
     public Color color_in;
     public Color color_process;
     public Color color_out;
@@ -17,6 +18,10 @@ public class WorldManager : MonoBehaviour
     public GameObject ImageViewerMax;
     RawImage ImageViewerMaxRawImage;
     RectTransform rectTransform;
+    public bool isShowingImageInFullScreen;
+    #endregion
+
+    #region SINGLETON
     public static WorldManager Instance { get; internal set; }
 
     public void Awake()
@@ -26,22 +31,33 @@ public class WorldManager : MonoBehaviour
         else
             Destroy(this);
     }
+    #endregion
 
+    #region UNITY METHODS
     public void Start()
     {
         ImageViewerMaxRawImage = ImageViewerMax.GetComponent<RawImage>();
         ImageViewerMax.SetActive(false);
         rectTransform = ImageViewerMax.GetComponent<RectTransform>();
     }
+    public void Update()
+    {
+        if (isShowingImageInFullScreen && Input.GetMouseButtonDown(0))
+            _ImageViewerMax_Hide();
+    }
+    #endregion
 
+    #region Affichage image fullscreen
     public void _ImageViewerMax_Show(Texture2D texture2D)
     {
+        isShowingImageInFullScreen = true;
         ImageViewerMaxRawImage.texture = texture2D;
+
         //AutoSizeMax
-        int sc_w = Screen.width;
+        float sc_w = Screen.width;
         int sc_h = Screen.height;
         float sc_r = sc_w / sc_h;
-        float im_r = texture2D.width / texture2D.height;
+        float im_r = (float)texture2D.width / texture2D.height;
 
         float w, h;
         if (im_r > sc_r) //largeur image > largeur écran
@@ -54,20 +70,14 @@ public class WorldManager : MonoBehaviour
             h = sc_h;
             w = h * im_r;
         }
-
         rectTransform.sizeDelta = new Vector2(w, h);
+
         ImageViewerMax.SetActive(true);
     }
     public void _ImageViewerMax_Hide()
     {
+        isShowingImageInFullScreen = false;
         ImageViewerMax.SetActive(false);
     }
-
-    public void Update()
-    {
-        if (Input.GetMouseButtonUp(1))
-        {
-            Instance._ImageViewerMax_Hide();
-        }
-    }
+    #endregion
 }

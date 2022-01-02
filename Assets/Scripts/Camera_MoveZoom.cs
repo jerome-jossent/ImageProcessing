@@ -1,15 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_MoveZoom : MonoBehaviour
 {
+    #region PARAMETERS
     bool moving;
     Vector3 mouse_position_0;
     public bool zoomInWhenWheelUp;
 
+    public float zoomMin, zoomMax;
+    public float xMax, xMin, yMax, yMin;
+    #endregion
+
+    #region SINGLETON
+    public static Camera_MoveZoom Instance { get; internal set; }
+
+    public void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this);
+    }
+    #endregion
+
+    #region UNITY METHODS
+    void Start()
+    {
+        if (zoomMin == 0) zoomMin = 0.1f;
+        if (zoomMax == 0) zoomMax = 100f;
+
+        if (xMax == 0) xMax = 10f;
+        if (xMin == 0) xMin = -10f;
+        if (yMax == 0) yMax = 5f;
+        if (yMin == 0) yMin = -5f;
+    }
+
     void Update()
     {
+        if (WorldManager.Instance.isShowingImageInFullScreen)
+            return;
+
         // click droit vient d'être appuyé
         if (Input.GetMouseButtonDown(1))
         {
@@ -28,26 +61,28 @@ public class Camera_MoveZoom : MonoBehaviour
             Vector3 deplacement = mouse_position_0 - mouse_position;
             transform.position += deplacement;
 
-            float Xp = 10;
-            float Xm = -10;
-            float Yp = 5;
-            float Ym = -5;
-
-            if (transform.position.x > Xp) transform.position = new Vector3(Xp, transform.position.y, transform.position.z);
-            if (transform.position.x < Xm) transform.position = new Vector3(Xm, transform.position.y, transform.position.z);
-            if (transform.position.y > Yp) transform.position = new Vector3(transform.position.x, Yp, transform.position.z);
-            if (transform.position.y < Ym) transform.position = new Vector3(transform.position.x, Ym, transform.position.z);
+            if (transform.position.x > xMax) transform.position = new Vector3(xMax, transform.position.y, transform.position.z);
+            if (transform.position.x < xMin) transform.position = new Vector3(xMin, transform.position.y, transform.position.z);
+            if (transform.position.y > yMax) transform.position = new Vector3(transform.position.x, yMax, transform.position.z);
+            if (transform.position.y < yMin) transform.position = new Vector3(transform.position.x, yMin, transform.position.z);
         }
 
         // zoom
         float zoom = (zoomInWhenWheelUp) ? -Input.mouseScrollDelta.y : Input.mouseScrollDelta.y;
         if (zoom != 0f)
         {
-            float Zp = 100;
-            float Zm = 1;
             Camera.main.orthographicSize += zoom;
-            if (Camera.main.orthographicSize > Zp) Camera.main.orthographicSize = Zp;
-            if (Camera.main.orthographicSize < Zm) Camera.main.orthographicSize = Zm;
+            if (Camera.main.orthographicSize > zoomMax) Camera.main.orthographicSize = zoomMax;
+            if (Camera.main.orthographicSize < zoomMin) Camera.main.orthographicSize = zoomMin;
         }
+    }
+    #endregion
+
+    internal void UpdateCameraLimits(Bounds bounds)
+    {
+        xMax = bounds.center.x / 100 + bounds.size.x / 200;
+        xMin = bounds.center.x / 100 - bounds.size.x / 200;
+        yMax = bounds.center.y / 100 + bounds.size.y / 200;
+        yMin = bounds.center.y / 100 - bounds.size.y / 200;
     }
 }

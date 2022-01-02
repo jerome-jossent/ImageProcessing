@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Menu_Manager : MonoBehaviour
 {
+    #region PARAMETERS
     public GameObject canvasWorld;
 
     public GameObject Menu_Boutons;
@@ -17,7 +18,9 @@ public class Menu_Manager : MonoBehaviour
     List<GameObject> prefabs_in;
     List<GameObject> prefabs_process;
     List<GameObject> prefabs_out;
+    #endregion
 
+    #region UNITY METHODS
     void Start()
     {
         Menu_Boutons.SetActive(false);
@@ -25,34 +28,9 @@ public class Menu_Manager : MonoBehaviour
         pannel2.SetActive(false);
         LoadPrefabs();
     }
+    #endregion
 
-    void LoadPrefabs()
-    {
-        prefabs_in = new List<GameObject>();
-        prefabs_process = new List<GameObject>();
-        prefabs_out = new List<GameObject>();
-
-        string prefabFolder = "Prefabs\\Tiles\\";
-        GameObject[] prefabs = Resources.LoadAll<GameObject>(prefabFolder);
-
-        foreach (GameObject prefab in prefabs)
-        {
-            Tile t = prefab.GetComponent<Tile>();
-            switch (t.typeGeneric)
-            {
-                case Tile.TileTypeGeneric.In:
-                    prefabs_in.Add(prefab);
-                    break;
-                case Tile.TileTypeGeneric.Process:
-                    prefabs_process.Add(prefab);
-                    break;
-                case Tile.TileTypeGeneric.Out:
-                    prefabs_out.Add(prefab);
-                    break;
-            }
-        }
-    }
-
+    #region UI
     public void _Menu_SHOW()
     {
         if (Menu_Boutons.activeSelf)
@@ -87,6 +65,7 @@ public class Menu_Manager : MonoBehaviour
     {
         WorldManager.Instance._removing = value;
     }
+    
     public void _Menu_RemoveOff()
     {
         WorldManager.Instance._removing = false;
@@ -96,10 +75,12 @@ public class Menu_Manager : MonoBehaviour
     {
         Menu_Add_Panel2(prefabs_in, WorldManager.Instance.color_in);
     }
+    
     public void _Menu_Add_Process() //Display
     {
         Menu_Add_Panel2(prefabs_process, WorldManager.Instance.color_process);
     }
+    
     public void _Menu_Add_Outs() //Display
     {
         Menu_Add_Panel2(prefabs_out, WorldManager.Instance.color_out);
@@ -139,6 +120,35 @@ public class Menu_Manager : MonoBehaviour
         go.name = name;
     }
 
+    #endregion
+
+    void LoadPrefabs()
+    {
+        prefabs_in = new List<GameObject>();
+        prefabs_process = new List<GameObject>();
+        prefabs_out = new List<GameObject>();
+
+        string prefabFolder = "Prefabs\\Tiles\\";
+        GameObject[] prefabs = Resources.LoadAll<GameObject>(prefabFolder);
+
+        foreach (GameObject prefab in prefabs)
+        {
+            Tile t = prefab.GetComponent<Tile>();
+            switch (t.typeGeneric)
+            {
+                case Tile.TileTypeGeneric.In:
+                    prefabs_in.Add(prefab);
+                    break;
+                case Tile.TileTypeGeneric.Process:
+                    prefabs_process.Add(prefab);
+                    break;
+                case Tile.TileTypeGeneric.Out:
+                    prefabs_out.Add(prefab);
+                    break;
+            }
+        }
+    }
+
     string GetNewName(string racine)
     {
         bool OK = false;
@@ -152,11 +162,5 @@ public class Menu_Manager : MonoBehaviour
                 rep = racine + " " + ++i;
         }
         return rep;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

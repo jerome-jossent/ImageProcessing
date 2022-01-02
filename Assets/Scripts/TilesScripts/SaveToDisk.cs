@@ -8,8 +8,9 @@ using System.Linq;
 using TMPro;
 using System.IO;
 
-public class SaveImagesToFolder : Tile
+public class SaveToDisk : Tile
 {
+    #region PARAMETERS
     public TMPro.TMP_Text TMP_Text_fileName;
     public string _folderName;
     public string _filename;
@@ -30,55 +31,55 @@ public class SaveImagesToFolder : Tile
     public int JPG_quality;
 
     Mat _mat_input;
-    public void _PickFolder()
-    {
-        string folder = PlayerPrefs.GetString("FileImage_folderSave");
+    #endregion
 
-        GameObject GOFileBrowser = GameObject.Find("FileBrowser");
-        Crosstales.FB.FileBrowser fileBrowser = GOFileBrowser.GetComponent<Crosstales.FB.FileBrowser>();
-        Crosstales.FB.ExtensionFilter[] ext = new Crosstales.FB.ExtensionFilter[] { new Crosstales.FB.ExtensionFilter { Name = "All", Extensions = new string[] { "*" } } };
-        string selectedFolder = fileBrowser.OpenSingleFolder("Select pictures folder", folder);
-
-        if (selectedFolder != "")
-        {
-            _folderName = selectedFolder;
-            TMP_Text_fileName.text = _folderName;
-            PlayerPrefs.SetString("FileImage_folder", _folderName);
-            DirectoryInfo directoryInfo = new DirectoryInfo(_folderName);
-        }
-    }
-
-    public void _Set_jpg_quality()
-    {
-        JPG_quality = (int)jpg_quality.slider.value;
-        _NewOutput(_mat_input);
-    }
-
-    public void _Set_png_compression()
-    {
-        PNG_compression = (int)png_compression.slider.value;
-        _NewOutput(_mat_input);
-    }
-
+    #region UNITY METHODS
     public new void Start()
     {
         base.Start();
 
         if (_tileInfo == null)
             _tileInfo = new TileInfo(this);
-        _tileInfo.type = TileInfo.TileType.SaveImagesToFolder;
+        _tileInfo.type = TileInfo.TileType.SaveToDisk;
 
-        FillDropDownWithEnum(_algoFormat, typeof(Algo));
-        png_compression._Set("compression", 0, 9, "0 no comp - 9 max comp");
-        jpg_quality._Set("quality", 0, 100, "");
+        //LOAD
+        Enum.TryParse(Get("_algo", varType._int), out _algo);
+        _folderName = Get("_folderName", varType._string);
+        Init_fichiers();
+
+        PNG_compression = int.Parse(Get("PNG_compression", varType._int));
+        JPG_quality = int.Parse(Get("JPG_quality", varType._int));
+
+        FillDropDownWithEnum(_algoFormat, typeof(Algo), _algo);
+        png_compression._Set("compression", 0, 9, PNG_compression, "0 no comp - 9 max comp");
+        jpg_quality._Set("quality", 0, 100, JPG_quality, "");
     }
 
-    void FillDropDownWithEnum(TMP_Dropdown dd, Type type)
+    #endregion
+
+    #region SET PARAMETERS
+    public void _Set_jpg_quality()
+    {
+        JPG_quality = (int)jpg_quality.slider.value;
+        Set("JPG_quality", JPG_quality.ToString());
+        _NewOutput(_mat_input);
+    }
+
+    public void _Set_png_compression()
+    {
+        PNG_compression = (int)png_compression.slider.value;
+        Set("PNG_compression", PNG_compression.ToString());
+        _NewOutput(_mat_input);
+    }
+    #endregion
+
+    #region UI
+    void FillDropDownWithEnum(TMP_Dropdown dd, Type type, Algo value)
     {   // ex : FillDropDownWithEnum(_algoDD, typeof(Algo));
         options = Enum.GetNames(type).ToList();
         _algoFormat.ClearOptions();
         _algoFormat.AddOptions(options);
-        _AlgoChange(_algoFormat.value);
+        _AlgoChange(options.IndexOf(value.ToString()));
     }
 
     public void _AlgoChange(int newSelection)
@@ -95,9 +96,38 @@ public class SaveImagesToFolder : Tile
                 Param_JPG.SetActive(true);
                 break;
         }
+        Set("_algo", _algo.ToString());
         _NewOutput(_mat_input);
     }
 
+    public void _PickFolder()
+    {
+        string folder = PlayerPrefs.GetString("FileImage_folderSave");
+
+        GameObject GOFileBrowser = GameObject.Find("FileBrowser");
+        Crosstales.FB.FileBrowser fileBrowser = GOFileBrowser.GetComponent<Crosstales.FB.FileBrowser>();
+        Crosstales.FB.ExtensionFilter[] ext = new Crosstales.FB.ExtensionFilter[] { new Crosstales.FB.ExtensionFilter { Name = "All", Extensions = new string[] { "*" } } };
+        string selectedFolder = fileBrowser.OpenSingleFolder("Select pictures folder", folder);
+
+        if (selectedFolder != null)
+        {
+            _folderName = selectedFolder;
+            Set("_folderName", _folderName);
+            Init_fichiers();
+        }
+    }
+    #endregion
+
+    void Init_fichiers()
+    {
+        TMP_Text_fileName.text = _folderName;
+        if (!Directory.Exists(_folderName))
+        {
+            //TODO ALARM
+        }
+    }
+
+    #region INPUT_OUTPUT
     public override void _NewInput(object input)
     {
         if (input == null) return;
@@ -132,4 +162,5 @@ public class SaveImagesToFolder : Tile
     {
         //TODO ?
     }
+    #endregion
 }
