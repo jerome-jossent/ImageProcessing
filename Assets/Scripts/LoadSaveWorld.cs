@@ -100,6 +100,9 @@ public class LoadSaveWorld : MonoBehaviour
                 wd.linksInfo.Add(link._linkInfo);
 
         txt = Newtonsoft.Json.JsonConvert.SerializeObject(wd, Newtonsoft.Json.Formatting.Indented);
+
+        //créé le dossier si besoin
+        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(fileJson));
         System.IO.File.WriteAllText(fileJson, txt);
     }
 }
