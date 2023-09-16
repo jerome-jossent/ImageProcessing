@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Camera_MoveZoom : MonoBehaviour
@@ -26,6 +27,9 @@ public class Camera_MoveZoom : MonoBehaviour
     }
     #endregion
 
+    TMP_Dropdown[] dropdowns;
+
+
     #region UNITY METHODS
     void Start()
     {
@@ -36,6 +40,8 @@ public class Camera_MoveZoom : MonoBehaviour
         if (xMin == 0) xMin = -10f;
         if (yMax == 0) yMax = 5f;
         if (yMin == 0) yMin = -5f;
+
+        dropdowns = GameObject.FindObjectsOfType<TMP_Dropdown>();
     }
 
     void Update()
@@ -68,12 +74,26 @@ public class Camera_MoveZoom : MonoBehaviour
         }
 
         // zoom
-        float zoom = (zoomInWhenWheelUp) ? -Input.mouseScrollDelta.y : Input.mouseScrollDelta.y;
-        if (zoom != 0f)
+        //Tester si un menu déroulant est ouvert ?
+        bool almost_one_dropdown_is_open = false;
+        foreach (TMP_Dropdown dropdown in dropdowns)
         {
-            Camera.main.orthographicSize += zoom;
-            if (Camera.main.orthographicSize > zoomMax) Camera.main.orthographicSize = zoomMax;
-            if (Camera.main.orthographicSize < zoomMin) Camera.main.orthographicSize = zoomMin;
+            if (dropdown.IsExpanded)
+            {
+                almost_one_dropdown_is_open = true;
+                break;
+            }
+        }
+
+        if (!almost_one_dropdown_is_open)
+        {
+            float zoom = (zoomInWhenWheelUp) ? -Input.mouseScrollDelta.y : Input.mouseScrollDelta.y;
+            if (zoom != 0f)
+            {
+                Camera.main.orthographicSize += zoom;
+                if (Camera.main.orthographicSize > zoomMax) Camera.main.orthographicSize = zoomMax;
+                if (Camera.main.orthographicSize < zoomMin) Camera.main.orthographicSize = zoomMin;
+            }
         }
     }
     #endregion

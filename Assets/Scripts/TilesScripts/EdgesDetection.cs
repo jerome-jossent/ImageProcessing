@@ -119,7 +119,7 @@ public class EdgesDetection : Tile
 
         _mat_input = (Mat)output;
         _edges = new Mat();
-
+        
         switch (_algo)
         {
             case Algo.Sobel:
