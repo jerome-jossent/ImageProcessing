@@ -224,6 +224,7 @@ public class TileInfo
         FileImage,
         ImageViewer,
         FolderImages,
+        MQTTImage,
         ToGray,
         EdgesDetection,
         SaveToDisk

@@ -57,7 +57,8 @@ public class ImageViewer : Tile
             case "OpenCVForUnity.CoreModule.Mat":
                 Mat imgMat = (Mat)input;
 
-                texture2D = new Texture2D(imgMat.cols(), imgMat.rows(), TextureFormat.RGBA32, false);
+//                texture2D = new Texture2D(imgMat.cols(), imgMat.rows(), TextureFormat.RGBA32, false);
+                texture2D = new Texture2D(imgMat.cols(), imgMat.rows(), TextureFormat.BGRA32, false);
 
                 if (imgMat.empty())
                 {
@@ -68,7 +69,7 @@ public class ImageViewer : Tile
                 {
                     Utils.setDebugMode(true);
                     Mat copy = imgMat.clone();
-                    Core.flip(copy, copy, 0);
+                    //Core.flip(copy, copy, 0);
                     Utils.matToTexture2D(copy, texture2D);
                     Utils.setDebugMode(false);
 
