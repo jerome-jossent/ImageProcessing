@@ -227,7 +227,9 @@ public class TileInfo
         MQTTImage,
         ToGray,
         EdgesDetection,
-        SaveToDisk
+        SaveToDisk,
+        ImageThresholding,
+        Resize,
     }
     #region PARAMETERS
     [JsonConverter(typeof(StringEnumConverter))]
